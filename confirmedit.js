@@ -12,6 +12,7 @@ mw.loader.using( 'mediawiki.util', function () {
 				} );
 
 			$container.append( fieldLayout.$element );
+			confirmCheckbox.fieldLayout = fieldLayout;
 
 			return confirmCheckbox;
 		}
@@ -53,10 +54,14 @@ mw.loader.using( 'mediawiki.util', function () {
 			var saveDialog = ve.init.target.saveDialog,
 				$saveCheckboxes = saveDialog.$saveCheckboxes;
 
-			saveDialog.getActions().setAbilities( { save: false } );
-			createOouiCheckbox( $saveCheckboxes ).on( 'change', function ( value ) {
-				saveDialog.getActions().setAbilities( { save: value } );
-			} );
+			if ( !saveDialog.confirmCheckbox ) {
+				saveDialog.getActions().setAbilities( { save: false } );
+				saveDialog.confirmCheckbox = createOouiCheckbox( $saveCheckboxes ).on( 'change', function ( value ) {
+					saveDialog.getActions().setAbilities( { save: value } );
+				} );
+			} else {
+				$saveCheckboxes.append( saveDialog.confirmCheckbox.fieldLayout.$element );
+			}
 		} );
 	} );
 } );
